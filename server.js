@@ -10,10 +10,12 @@ var mongoose = require("mongoose");
 var axios = require("axios");
 var cheerio = require("cheerio"); 
 
+// Set the port of our application
 var PORT = 8000; 
 
 var app = express();
 
+// Parse request body as JSON
 app.use(express.urlencoded({ extended:true }));
 app.use(express.json());
 
@@ -30,25 +32,62 @@ var db = require("./models");
 mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
 
 
-//routes
+//routes for delish.com
 //GET route to scrape the website first and save to db
+// app.get("/scrape", function(req,res){
+
+//     axios.get("https://www.delish.com/food-news").then(function(response) {
+       
+//         var $ = cheerio.load(response.data); 
+
+//     //make sure your results are in [], instead of {}!!! 
+//         var cards = [];
+//         $(".full-item-content").each(function(i, element) {
+//             var result = []; 
+            
+//             result.title = $(this).children("a").text(); 
+//             result.link = $(this).children("a").attr("href");
+
+//            cards.push(result.title); 
+//            cards.push(result.link);
+//             });        console.log(cards);
+//         }); res.send("Scrape Complete"); 
+        
+//     });
+
+app.get("/", function(req, res) {
+    res.render("index");
+})
+//route for allrecipes
 app.get("/scrape", function(req,res){
 
-    axios.get("https://www.delish.com/food-news").then(function(response) {
-       
-        var $ = cheerio.load(response.data); 
-        var cards = [];
-        $(".full-item-content").each(function(i, element) {
-            var result = []; 
-            
-            result.title = $(this).children("a").text(); 
-            result.link = $(this).children("a").attr("href");
+        axios.get("https://www.allrecipes.com/recipes/17562/dinner/").then(function(response) {
+           
+            var $ = cheerio.load(response.data); 
+    
+        //make sure your results are in [], instead of {}!!! 
+            var cards = [];
+            $(".fixed-recipe-card__h3 a").each(function(i, element) {
+                var result = []; 
+                
+                result.title = $(this).children("span").text(); 
+                result.link = $(this).attr("href");
+                
+    
+               cards.push(result.title); 
+               cards.push(result.link);
+                }); console.log(cards);
 
-           cards.push(result.title); 
-           cards.push(result.link);
-            });        console.log(cards);
+            // $("grid-card-image-container").each(function(i, element){
+            //     var imageArr = [];
+            //     imageArr.image = $(this).children("a").attr("data-imageurl");
+
+            //     cards.push(imageArr.image);
+                
+            //}); 
+            // console.log(imageArr.image);
         }); res.send("Scrape Complete"); 
-        
+            
     });
 
 //GET route to get saved data from db

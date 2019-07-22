@@ -47,9 +47,11 @@ mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
             
 //             result.title = $(this).children("a").text(); 
 //             result.link = $(this).children("a").attr("href");
+   
 
 //            cards.push(result.title); 
 //            cards.push(result.link);
+
 //             });        console.log(cards);
 //         }); res.send("Scrape Complete"); 
         
@@ -76,16 +78,18 @@ app.get("/scrape", function(req,res){
     
                cards.push(result.title); 
                cards.push(result.link);
-                }); console.log(cards);
+                }); 
+                // console.log(cards);
+                var imageArr = []; 
+                // var i = 0;
+            $(".grid-card-image-container a").each(function(i, element){
 
-            // $("grid-card-image-container").each(function(i, element){
-            //     var imageArr = [];
-            //     imageArr.image = $(this).children("a").attr("data-imageurl");
-
-            //     cards.push(imageArr.image);
+                var image  = $(this).children("img").attr("data-original-src");
                 
-            //}); 
-            // console.log(imageArr.image);
+                // imageArr.push(cards[i] + '  ' +image );
+                // i++;
+
+            }); console.log(imageArr);
         }); res.send("Scrape Complete"); 
             
     });

@@ -62,7 +62,7 @@ mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
 
 app.get("/", function(req, res) {
     db.Recipe.find({}).then(function(dbRecipe){
-        res.render("index", {
+        res.render("home", {
             recipes: dbRecipe
         });
     }).catch(function(err){

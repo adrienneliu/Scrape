@@ -1,0 +1,20 @@
+{{!-- {{>header home=true saved=false}} --}}
+
+{{!-- //here we will render the data onto the DOM --}}
+
+<div>
+    <h1>Hello</h1>
+    {{!-- //scrape button so that users don't need to type /scrape --}}
+    <button id="scrape" class="btn">Scrape for more Deliciousness!</button>
+</div>
+
+{{#each recipes}}
+{{!-- checking if recipe is saved. we don't want saved --}}
+    {{#unless this.saved}}
+        <div class="recipe-wrap">
+            <p>{{this.title}}</p>
+            <a href="{{this.link}}">View</a>
+            <button class="save-btn" data-rid="{{this._id}}">Save</button>
+        </div>
+    {{/unless}}
+{{/each}}

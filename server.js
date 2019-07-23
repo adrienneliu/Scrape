@@ -140,6 +140,24 @@ app.put("/recipe/:id", function(req,res){
     })
   })
 
+  //Route for grabbing a specific recipe by id, populate it with it's note
+app.post("/recipe/:id/note", function(req, res) {
+  console.log(req.body);
+  // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  db.Note.create(req.body)
+    // ..and populate all of the notes associated with it
+    .then(function(dbNote) {
+      return db.Recipe.findOneAndUpdate({_id: req.params.id}, {note: dbNote._id}, {new:true});
+      // If we were able to successfully find an recipe with the given id, send it back to the client
+
+    }).then(function(dbRecipe){
+      res.json(dbRecipe);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
 //starting server
 app.listen(PORT, function() {
     console.log("Listening on http://localhost:" + PORT)

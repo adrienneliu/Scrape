@@ -76,36 +76,31 @@ app.get("/scrape", function(req,res){
            
             var $ = cheerio.load(response.data); 
     
-        //make sure your results are in [], instead of {}!!! 
-            var cards = [];
             $(".fixed-recipe-card__h3 a").each(function(i, element) {
-                var result = []; 
+                var result = {}; 
                 
                 result.title = $(this).children("span").text(); 
                 result.link = $(this).attr("href");
                 
-    
-               cards.push(result.title); 
-               cards.push(result.link);
-                
+    //this transfers our data into mongodb
                db.Recipe.create(result).then(function(dbRecipe){
                    console.log(dbRecipe);
                }).catch(function(err){
                    console.log(err);
                });
             }); 
-                 console.log(cards);
-                var imageArr = []; 
-                // // var i = 0;
-            $(".grid-card-image-container a").each(function(i, element){
 
-                var image  = $(this).children("img").attr("data-original-src");
+            //     var imageArr = []; 
+            //     // // var i = 0;
+            // $(".grid-card-image-container a").each(function(i, element){
+
+            //     var image  = $(this).children("img").attr("data-original-src");
                 
-                imageArr.push(image);
-                // imageArr.push(cards[i] + '  ' +image );
-                // i++;
+            //     imageArr.push(image);
+            //     // imageArr.push(cards[i] + '  ' +image );
+            //     // i++;
 
-             }); console.log(imageArr);
+            //  }); console.log(imageArr);
         }); res.json("Scrape Complete"); 
             
     });

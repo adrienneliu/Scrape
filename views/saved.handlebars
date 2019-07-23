@@ -1,68 +1,67 @@
-
-
 <!-- This is the modal with the default close button -->
 <div id="modal-close-default" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <h2 class="uk-modal-title">Recipe Note</h2>
-        {{!-- this is the form we will see when we want to display a note --}}
-        <form>
-            <div class="uk-margin">
-            <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Title" id="title">
-            </div>
-            <div class="uk-margin">
-            <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Body" id="body">
-            </div>
-        </form>
+        <div id="note-wrap" data-nid="" data-rid="">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title">Recipe Note</h2>
+            {{!-- this is the form we will see when we want to display a note --}}
+
+            <form class="note-form">
+                <div class="uk-margin" data-nid="" data-aid="">
+                    <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Title" id="title">
+                </div>
+                <div class="uk-margin">
+                    <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Body" id="body">
+                </div>
+            </form>
             </br>
             <button class="uk-button uk-button-default" id="update-note">Save</button>
             <button class="uk-button uk-button-default" id="cancel-note">Cancel</button>
-
+        </div>
     </div>
 </div>
 
 
-
-    
 {{>header home=false saved=true}}
 
 
 <div class="uk-container">
-    <div class="uk-flex uk-flex-column uk-width-1-3" uk-grid
+    <div class="uk-flex uk-flex-column uk-width-1-2" uk-grid
         uk-scrollspy="cls: uk-animation-slide-bottom; target: .uk-card; delay: 200; repeat: false">
 
-<h1>Saved Recipes</h1> 
-{{#each recipes}}
-    {{#if saved}}
-    {{!-- it will render --}}
+        <h1>Saved Recipes</h1>
+        {{#each recipes}}
+        {{#if saved}}
+        {{!-- it will render --}}
         <div class="uk-card uk-card-default uk-card-body uk-margin-top" id="recipe-wrap" data-rid="{{this._id}}">
             <p>{{this.title}}</p>
-            <a class= "uk-button uk-button-default" href="{{this.link}}">Recipe Link</a>
+            <a class="uk-button uk-button-default" href="{{this.link}}">Recipe Link</a>
             {{!-- now theres a unsave button --}}
             <button class="uk-button uk-button-default" id="unsave-btn" data-rid="{{this._id}}">Unsave</button>
-              {{#unless note}}
-                <button class="uk-button uk-button-default uk-margin-small-right" id="add-btn" data-rid="{{this._id}}" type="button" uk-toggle="target: #modal-close-default">Add a note</button>
-                    {{else}}
-                    {{!-- needs functionality: update and delete --}}
-                        <div class="note-wrap" data-nid="{{this._id}}">
-                            <p class="note-title">{{this.note.title}}</p>
-                            <p class="note-body">{{this.note.body}}</p>
-                            <button class="uk-button uk-button-default" id="update-btn">Update</button>
-                            <button class="uk-button uk-button-default" id="delete-btn">Delete</button>
-                    </div>
+            {{#unless note}}
+            <button class="uk-button uk-button-default uk-margin-small-right" id="add-btn" data-rid="{{this._id}}"
+                type="button" uk-toggle="target: #modal-close-default">Add a note</button>
+            {{else}}
+            {{!-- needs functionality: update and delete --}}
+            <div class="note-wrap" data-nid="{{this._id}}">
+                <p class="note-title">{{this.note.title}}</p>
+                <p class="note-body">{{this.note.body}}</p>
+                <button class="uk-button uk-button-default" id="update-btn">Update</button>
+                <button class="uk-button uk-button-default" id="delete-btn">Delete</button>
+            </div>
             {{/unless}}
         </div>
 
-    {{/if}}
-{{/each}}
-</div>
+        {{/if}}
+        {{/each}}
+    </div>
 
 
-{{!-- if there are no articles to be rendered --}}
-{{#unless recipes}}
+    {{!-- if there are no articles to be rendered --}}
+    {{#unless recipes}}
     <h3>No saved recipes to display yet!</h3>
     <a href="/">Go Scrape</a>
-{{/unless}}
+    {{/unless}}
 
 <script>
     // jquery for unsave button 
@@ -85,21 +84,52 @@
             type: 'PUT',
             data: updateRecipe,
             success: function (result) {
-                    //do something with result
-                    //check if result comes back as updated
-                    //remove item from dom 
-                    var parentElm = self.parent("#recipe-wrap");
-                    console.log(parentElm);
-                    parentElm.remove();
+                //do something with result
+                //check if result comes back as updated
+                //remove item from dom 
+                var parentElm = self.parent("#recipe-wrap");
+                console.log(parentElm);
+                parentElm.remove();
             }
         })
     })
 
-    $("#add-btn").on("click", function(){
+    $("#add-btn").on("click", function () {
         var recipeId = $(this).data("rid");
-        $(".note-wrap").attr("data-rid", recipeId);
+        $("#note-wrap").attr("data-rid", recipeId);
+        console.log(recipeId);
         //currntly form belongs to this article. 
-        $(".note-wrap").slideDown("slow");
     });
     //jquery for save button
+
+    function clearForm() {
+        $("#title, #body").val("");
+        $("#note-wrap").attr("data-rid", "");
+    }
+
+    $("#update-note").on("click", function (e) {
+        $(".note-form")[0].reportValidity();
+        //makes sure body and title are submitted
+        e.preventDefault();
+
+        var recipeId = $(this).parents("#note-wrap").data("rid");
+        console.log(recipeId);
+
+        var note = {
+            title: $("#title").val().trim(),
+            body: $("#body").val().trim()
+        }
+        $.post("/recipe/" + recipeId + "/note", note, function (response) {
+            console.log(response);
+            clearForm();
+        })
+    })
+
+    $("#cancel-note").on("click", function (e) {
+        e.preventDefault();
+        $("#title, #body").val("");
+        $("#note-wrap").attr("data-aid", "");
+        clearForm();
+    })
+
 </script>

@@ -17,7 +17,7 @@
         <div class="uk-card uk-card-default uk-card-body uk-margin-top" id="recipe-wrap">
             <p>{{this.title}}</p>
             <a class="uk-button uk-button-default" href="{{this.link}}" uk-icon="icon: cart; ratio: 1">Cook Me</a>
-            <button class="uk-button uk-button-default" uk-icon="heart" data-rid="{{this._id}}" id="save-btn">Love
+            <button class="uk-button uk-button-default save-btn" uk-icon="heart" data-rid="{{this._id}}" >Love
                 Me</button>
         </div>
         {{/unless}}
@@ -45,7 +45,7 @@
     });
 
     // jquery for save button 
-    $("#save-btn").on("click", function () {
+    $(".save-btn").on("click", function () {
         var recipeId = $(this).data("rid");
 
         //update article state from being unsaved to saved 

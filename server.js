@@ -111,6 +111,7 @@ app.get("/saved", function(req, res) {
     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   // Grab every document in the Articles collection
   db.Recipe.find({ saved: true})
+  .populate("note")
 //   .populate("note")
   // can put filtering in find({saved:false})
     .then(function(dbRecipe) {

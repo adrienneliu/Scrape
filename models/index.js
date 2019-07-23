@@ -1,5 +1,6 @@
 //export object containing models
 
 module.exports = {
-    Recipe: require("./Recipe")
+    Recipe: require("./Recipe"),
+    Note: require("./Note")
 };

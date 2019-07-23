@@ -60,6 +60,7 @@ mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
         
 //     });
 
+//route for getting all recipes from db
 app.get("/", function(req, res) {
     db.Recipe.find({}).then(function(dbRecipe){
         res.render("home", {
@@ -106,6 +107,38 @@ app.get("/scrape", function(req,res){
     });
 
 //GET route to get saved data from db
+app.get("/saved", function(req, res) {
+    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+  // Grab every document in the Articles collection
+  db.Recipe.find({ saved: true})
+//   .populate("note")
+  // can put filtering in find({saved:false})
+    .then(function(dbRecipe) {
+      // If we were able to successfully find Articles, send them back to the client
+      // res.json(dbRecipe);
+      res.render("saved", {
+        recipes: dbRecipe
+      })
+      // console.log(dbRecipe)
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      //res.json(err);
+      console.log("err", err);
+    });
+});
+
+// just added this in for our save button update
+app.put("/recipe/:id", function(req,res){
+    db.Recipe.findOneAndUpdate({ _id: req.params.id }, req.body)
+    .then(function(response){
+      res.json(true)
+      console.log(response);
+    })
+    .catch(function(err){
+      console.log(err);
+    })
+  })
 
 //starting server
 app.listen(PORT, function() {

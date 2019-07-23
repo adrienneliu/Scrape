@@ -1,0 +1,45 @@
+{{!-- this is the form we will see when we want to display a note --}}
+    <div class="note-wrap hide" data-nid="" data-rid="">
+        {{!-- nid and rid are empty bc it will be dynamically generated --}}
+        <form class="note-form">
+            <h4>Recipe Note</h4>
+            <label for="title">Note Title:</label>
+            <input type="text" id="title" required> 
+            <br/>
+            <label for="body">Note Body:</label>
+            <textarea id="body" required></textarea>
+            </br>
+            <button class="update-note">Save</button>
+            <button class="cancel-note">Cancel</button>
+        </form>
+    </div>
+
+    
+{{>header home=false saved=true}}
+
+<h1>Saved Recipes</h1> 
+{{#each recipes}}
+    {{#if saved}}
+    {{!-- it will render --}}
+        <div class="recipe-wrap" data-rid="{{this._id}}">
+            <p>{{this.title}}</p>
+            <a href="{{this.link}}">Recipe Link</a>
+            {{!-- now theres a unsave button --}}
+            <button class="unsave-btn" data-rid="{{this._id}}">Unsave</button>
+
+        </div>
+    {{/if}}
+{{/each}}
+
+
+
+{{!-- if there are no articles to be rendered --}}
+{{#unless recipes}}
+    <h3>No saved recipes to display yet!</h3>
+    <a href="/">Go Scrape</a>
+{{/unless}}
+
+<script>
+
+
+</script>

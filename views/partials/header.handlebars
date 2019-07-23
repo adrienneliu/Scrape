@@ -1,0 +1,18 @@
+{{!-- need to get to saved, and need to get to home --}}
+
+<style>
+    .active {
+        color: rgb(126, 221, 221);
+        font-weight: 600;
+    }
+</style>
+
+<header>
+    <nav>
+        {{!-- <a href="/">Home</a> --}}
+        <a href="/" class="{{#if home}} active {{/if}} uk-button uk-button-default">Home</a>
+        <a href="/saved" class="{{#if saved}} active {{/if}} uk-button uk-button-default">Saved Articles</a>
+    </nav>
+</header>
+
+{{!-- now we don't need it on every single page.  --}}

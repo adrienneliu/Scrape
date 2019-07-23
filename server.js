@@ -13,6 +13,7 @@ var cheerio = require("cheerio");
 // Set the port of our application
 var PORT = 8000; 
 
+//start express
 var app = express();
 
 // Parse request body as JSON
@@ -22,9 +23,11 @@ app.use(express.json());
 // need folder for public
 app.use(express.static("public"));
 
+//handlebars
 var exphbs = require("express-handlebars"); 
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+
 // folder for models
 var db = require("./models");
 
@@ -58,8 +61,14 @@ mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
 //     });
 
 app.get("/", function(req, res) {
-    res.render("index");
-})
+    db.Recipe.find({}).then(function(dbRecipe){
+        res.render("index", {
+            recipes: dbRecipe
+        });
+    }).catch(function(err){
+        console.log(err);
+    });
+});
 //route for allrecipes
 app.get("/scrape", function(req,res){
 
@@ -78,19 +87,26 @@ app.get("/scrape", function(req,res){
     
                cards.push(result.title); 
                cards.push(result.link);
-                }); 
-                // console.log(cards);
+                
+               db.Recipe.create(result).then(function(dbRecipe){
+                   console.log(dbRecipe);
+               }).catch(function(err){
+                   console.log(err);
+               });
+            }); 
+                 console.log(cards);
                 var imageArr = []; 
-                // var i = 0;
+                // // var i = 0;
             $(".grid-card-image-container a").each(function(i, element){
 
                 var image  = $(this).children("img").attr("data-original-src");
                 
+                imageArr.push(image);
                 // imageArr.push(cards[i] + '  ' +image );
                 // i++;
 
-            }); console.log(imageArr);
-        }); res.send("Scrape Complete"); 
+             }); console.log(imageArr);
+        }); res.json("Scrape Complete"); 
             
     });
 
@@ -98,5 +114,5 @@ app.get("/scrape", function(req,res){
 
 //starting server
 app.listen(PORT, function() {
-    console.log("Listening on http://localhost:" + PORT);
+    console.log("Listening on http://localhost:" + PORT)
 })

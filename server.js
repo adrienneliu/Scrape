@@ -77,18 +77,30 @@ app.get("/scrape", function(req,res){
            
             var $ = cheerio.load(response.data); 
     
-            $(".fixed-recipe-card__h3 a").each(function(i, element) {
+            // $(".fixed-recipe-card__h3 a").each(function(i, element) {
+            //     var result = {}; 
+                
+            //     result.title = $(this).children("span").text(); 
+            //     result.link = $(this).attr("href");
+
+                $("article").each(function(i, element) {
                 var result = {}; 
                 
-                result.title = $(this).children("span").text(); 
-                result.link = $(this).attr("href");
-                
+                result.title = $(this).children(".fixed-recipe-card__info").children("h3").children("a").children("span").text();
+                result.link = $(this).children(".fixed-recipe-card__info").children("h3").children("a").attr("href");
+                result.image = $(this).children(".grid-card-image-container").children("a").children("img").attr("data-original-src"); 
+
+                console.log(result);
     //this transfers our data into mongodb
+            if (result.title && result.link && result.image) {
                db.Recipe.create(result).then(function(dbRecipe){
                    console.log(dbRecipe);
                }).catch(function(err){
                    console.log(err);
+                   console.log("results");
+                   console.log(result);
                });
+              }
             }); 
 
             //     var imageArr = []; 

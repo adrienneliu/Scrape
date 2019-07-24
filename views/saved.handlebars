@@ -100,6 +100,7 @@ $("#add-btn").on("click", function () {
     $(".note-wrap").attr("data-rid", recipeId);
     console.log(recipeId);
     //currntly form belongs to this article. 
+
 });
 //jquery for save button
 
@@ -125,6 +126,8 @@ $(".save-note").on("click", function (e) {
         console.log(response);
         clearForm();
     })
+    $("#modal-close-default").hide();
+    location.reload(true);
 })
 
 //delete button
@@ -152,7 +155,7 @@ $(".delete-btn").on("click", function () {
             parentElm.remove();
         }
     })
-
+location.reload(true);
 
 })
 </script>

@@ -20,6 +20,10 @@ var RecipeSchema = new Schema ({
     note: {
         type: Schema.Types.ObjectId,
         ref: "Note"
+    },
+    image: {
+        type: String,
+        required: true
     }
 });
 

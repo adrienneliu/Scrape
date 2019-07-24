@@ -1,17 +1,20 @@
+var express = require("express");
+var mongoose = require("mongoose"); 
+
+
 //  // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
-mongoose.connect(MONGODB_URI);
+// Connect to the Mongo DB
+mongoose.connect(MONGODB_URI, { useNewUrlParser: true });
 
-var express = require("express");
-var mongoose = require("mongoose"); 
 
 //Scraping tools 
 var axios = require("axios");
 var cheerio = require("cheerio"); 
 
 // Set the port of our application
-var PORT = 8000; 
+var PORT = process.env.PORT || 8000; 
 
 //start express
 var app = express();
@@ -31,8 +34,6 @@ app.set("view engine", "handlebars");
 // folder for models
 var db = require("./models");
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/recipes", { useNewUrlParser: true });
 
 
 //routes for delish.com

@@ -107,6 +107,7 @@ app.get("/scrape", function(req,res){
     });
 
 //GET route to get saved data from db
+//get=read
 app.get("/saved", function(req, res) {
     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   // Grab every document in the Articles collection
@@ -130,6 +131,7 @@ app.get("/saved", function(req, res) {
 });
 
 // just added this in for our save button update
+//put=update
 app.put("/recipe/:id", function(req,res){
     db.Recipe.findOneAndUpdate({ _id: req.params.id }, req.body)
     .then(function(response){
@@ -142,23 +144,48 @@ app.put("/recipe/:id", function(req,res){
   })
 
   //Route for grabbing a specific recipe by id, populate it with it's note
+  //post=create
 app.post("/recipe/:id/note", function(req, res) {
   console.log(req.body);
   // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
   db.Note.create(req.body)
     // ..and populate all of the notes associated with it
     .then(function(dbNote) {
+      console.log("------note id-----");
+      console.log(dbNote._id);
+      console.log("------article id-----");
+      console.log( req.params.id);
+
       return db.Recipe.findOneAndUpdate({_id: req.params.id}, {note: dbNote._id}, {new:true});
       // If we were able to successfully find an recipe with the given id, send it back to the client
-
     }).then(function(dbRecipe){
       res.json(dbRecipe);
+
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
       res.json(err);
     });
 });
+
+//Route for grabbing a specific note by id, deleting it
+//get=read
+app.delete("/recipe/:id/note", function(req, res) {
+  db.Note.findOneAndRemove({_id:req.params.id}, function (err, data) {
+    console.log(req.body);
+    console.log("param id");
+    console.log(req.params.id);
+    if (err) {
+        console.log(err);
+    } else {
+    }
+    console.log("ddata")
+    console.log(data);
+    res.json(data);
+
+});
+});
+
 //starting server
 app.listen(PORT, function() {
     console.log("Listening on http://localhost:" + PORT)

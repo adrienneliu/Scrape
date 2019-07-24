@@ -1,25 +1,25 @@
 <!-- This is the modal with the default close button -->
 <div id="modal-close-default" uk-modal>
     <div class="uk-modal-dialog uk-modal-body">
-        <div id="note-wrap" data-nid="" data-rid="">
-            <button class="uk-modal-close-default" type="button" uk-close></button>
-            <h2 class="uk-modal-title">Recipe Note</h2>
-            {{!-- this is the form we will see when we want to display a note --}}
 
+    <button class="uk-modal-close-default" type="button" uk-close></button>
+    <h2 class="uk-modal-title">Recipe Note</h2>
+{{!-- this is the form we will see when we want to display a note --}}
+        <div class="note-wrap" data-nid="" data-rid="">
             <form class="note-form">
-                <div class="uk-margin" data-nid="" data-aid="">
-                    <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Title" id="title">
-                </div>
+                <input class="uk-input uk-form-width-large" type="text" placeholder="Note Title" id="title">
+        
                 <div class="uk-margin">
-                    <input class="uk-input uk-form-width-medium" type="text" placeholder="Note Body" id="body">
+                <input class="uk-input uk-form-width-large" type="text" placeholder="Note Body" id="body">
                 </div>
             </form>
-            </br>
-            <button class="uk-button uk-button-default" id="update-note">Save</button>
-            <button class="uk-button uk-button-default" id="cancel-note">Cancel</button>
+        </br>
+        <button class="uk-button uk-button-default save-note">Save</button>
+        <button class="uk-button uk-button-default cancel-note">Cancel</button>
         </div>
-    </div>
+     </div>
 </div>
+
 
 
 {{>header home=false saved=true}}
@@ -33,21 +33,20 @@
         {{#each recipes}}
         {{#if saved}}
         {{!-- it will render --}}
-        <div class="uk-card uk-card-default uk-card-body uk-margin-top" id="recipe-wrap" data-rid="{{this._id}}">
+        <div class="uk-card uk-card-default uk-card-body uk-margin-top recipe-wrap" data-rid="{{this._id}}">
             <p>{{this.title}}</p>
             <a class="uk-button uk-button-default" href="{{this.link}}">Recipe Link</a>
             {{!-- now theres a unsave button --}}
-            <button class="uk-button uk-button-default" id="unsave-btn" data-rid="{{this._id}}">Unsave</button>
+            <button class="uk-button uk-button-default unsave-btn" data-rid="{{this._id}}">Unsave</button>
             {{#unless note}}
             <button class="uk-button uk-button-default uk-margin-small-right" id="add-btn" data-rid="{{this._id}}"
                 type="button" uk-toggle="target: #modal-close-default">Add a note</button>
             {{else}}
             {{!-- needs functionality: update and delete --}}
-            <div class="note-wrap" data-nid="{{this._id}}">
+            <div class="note-wrap" data-nid="{{this.note._id}}" data-rid={{this._id}}>
                 <p class="note-title">{{this.note.title}}</p>
                 <p class="note-body">{{this.note.body}}</p>
-                <button class="uk-button uk-button-default" id="update-btn">Update</button>
-                <button class="uk-button uk-button-default" id="delete-btn">Delete</button>
+                <button class="uk-button uk-button-default delete-btn">Delete</button>
             </div>
             {{/unless}}
         </div>
@@ -63,73 +62,97 @@
     <a href="/">Go Scrape</a>
     {{/unless}}
 
+
 <script>
-    // jquery for unsave button 
-    $("#unsave-btn").on("click", function () {
-        var recipeId = $(this).data("rid");
+// jquery for unsave recipe button 
+$(".unsave-btn").on("click", function () {
+    var recipeId = $(this).data("rid");
 
-        //update article state from being unsaved to saved 
-        var updateRecipe = {
-            saved: false
-        }
-        //to make sure we can grab the id, comment out ajax call and console log id 
-        console.log(recipeId);
-        console.log(updateRecipe);
-
-        //losing scope = put this outside in global and call again in parentE
-        var self = $(this);
-        // communicate with server to update article
-        $.ajax({
-            url: '/recipe/' + recipeId,
-            type: 'PUT',
-            data: updateRecipe,
-            success: function (result) {
-                //do something with result
-                //check if result comes back as updated
-                //remove item from dom 
-                var parentElm = self.parent("#recipe-wrap");
-                console.log(parentElm);
-                parentElm.remove();
-            }
-        })
-    })
-
-    $("#add-btn").on("click", function () {
-        var recipeId = $(this).data("rid");
-        $("#note-wrap").attr("data-rid", recipeId);
-        console.log(recipeId);
-        //currntly form belongs to this article. 
-    });
-    //jquery for save button
-
-    function clearForm() {
-        $("#title, #body").val("");
-        $("#note-wrap").attr("data-rid", "");
+    //update article state from being unsaved to saved 
+    var updateRecipe = {
+        saved: false
     }
+    //to make sure we can grab the id, comment out ajax call and console log id 
+    console.log(recipeId);
+    console.log(updateRecipe);
 
-    $("#update-note").on("click", function (e) {
-        $(".note-form")[0].reportValidity();
-        //makes sure body and title are submitted
-        e.preventDefault();
-
-        var recipeId = $(this).parents("#note-wrap").data("rid");
-        console.log(recipeId);
-
-        var note = {
-            title: $("#title").val().trim(),
-            body: $("#body").val().trim()
+    //losing scope = put this outside in global and call again in parentE
+    var self = $(this);
+    // communicate with server to update article
+    $.ajax({
+        url: '/recipe/' + recipeId,
+        type: 'PUT',
+        data: updateRecipe,
+        success: function (result) {
+            //do something with result
+            //check if result comes back as updated
+            //remove item from dom 
+            var parentElm = self.parent(".recipe-wrap");
+            console.log(parentElm);
+            parentElm.remove();
         }
-        $.post("/recipe/" + recipeId + "/note", note, function (response) {
-            console.log(response);
-            clearForm();
-        })
     })
+})
 
-    $("#cancel-note").on("click", function (e) {
-        e.preventDefault();
-        $("#title, #body").val("");
-        $("#note-wrap").attr("data-aid", "");
+//add note
+$("#add-btn").on("click", function () {
+    var recipeId = $(this).data("rid");
+    $(".note-wrap").attr("data-rid", recipeId);
+    console.log(recipeId);
+    //currntly form belongs to this article. 
+});
+//jquery for save button
+
+function clearForm() {
+    $("#title, #body").val("");
+    $(".note-wrap").attr("data-rid", "");
+}
+
+//save a note
+$(".save-note").on("click", function (e) {
+    $(".note-form")[0].reportValidity();
+    //makes sure body and title are submitted
+    e.preventDefault();
+
+    var recipeId = $(this).parents(".note-wrap").data("rid");
+    console.log(recipeId);
+
+    var note = {
+        title: $("#title").val().trim(),
+        body: $("#body").val().trim()
+    }
+    $.post("/recipe/" + recipeId + "/note", note, function (response) {
+        console.log(response);
         clearForm();
     })
+})
 
+//delete button
+$(".delete-btn").on("click", function () {
+    var noteId = $(this).parents(".note-wrap").data("nid");
+    var articleId=$(this).parents(".note-wrap").data("rid");
+
+    console.log("hello");
+    console.log(noteId);
+    console.log("----article---");
+    console.log(articleId);
+    console.log("end");
+    //currntly form belongs to this article. 
+    var self = $(this);
+// communicate with server to update article 
+    $.ajax({
+        url: '/recipe/'+noteId+'/note', 
+        type: 'DELETE', 
+        data: noteId,
+        success: function(result){
+            //do something with result
+            //check if result comes back as updated
+            //remove item from dom 
+            var parentElm = self.parent(".recipe-wrap");
+            parentElm.remove();
+        }
+    })
+
+
+})
 </script>

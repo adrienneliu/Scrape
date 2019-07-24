@@ -29,11 +29,12 @@
     <div class="uk-flex uk-flex-column uk-width-1-2" uk-grid
         uk-scrollspy="cls: uk-animation-slide-bottom; target: .uk-card; delay: 200; repeat: false">
 
-        <h1>Saved Recipes</h1>
         {{#each recipes}}
         {{#if saved}}
         {{!-- it will render --}}
         <div class="uk-card uk-card-default uk-card-body uk-margin-top recipe-wrap" data-rid="{{this._id}}">
+            <img src="{{this.image}}" class="uk-align-center">
+     
             <p>{{this.title}}</p>
             <a class="uk-button uk-button-default" href="{{this.link}}">Recipe Link</a>
             {{!-- now theres a unsave button --}}
@@ -59,7 +60,7 @@
     {{!-- if there are no articles to be rendered --}}
     {{#unless recipes}}
     <h3>No saved recipes to display yet!</h3>
-    <a href="/">Go Scrape</a>
+    <a href="/" class="uk-button uk-button-default">Go Scrape</a>
     {{/unless}}
 
 

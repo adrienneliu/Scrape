@@ -8,10 +8,17 @@
 </style>
 
 <header>
-    <nav>
-        {{!-- <a href="/">Home</a> --}}
-        <a href="/" class="{{#if home}} active {{/if}} uk-button uk-button-default">Home</a>
-        <a href="/saved" class="{{#if saved}} active {{/if}} uk-button uk-button-default">Saved Articles</a>
+    <nav class="uk-navbar-container" uk-navbar>
+
+    <div class="uk-navbar-left">
+
+        <ul class="uk-navbar-nav">
+            <li class="uk-active"> <a href="/" class="{{#if home}} active {{/if}}">Home</a></li>
+            <li><a href="/saved" class="{{#if saved}} active {{/if}} ">Saved Recipes</a></li>
+        </ul>
+
+    </div>
+
     </nav>
 </header>
 
